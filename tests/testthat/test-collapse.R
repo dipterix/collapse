@@ -2,7 +2,7 @@ test_that('testing collapse with 100x100x10x10', {
   dim <- c(100, 100, 300, 10)
   x <- array(rnorm(prod(dim)), dim = dim)
 
-  keep <- c(4, 2)
+  keep <- c(3, 2)
 
   # Sum
   r1 <- apply(x, keep, sum)
@@ -12,15 +12,15 @@ test_that('testing collapse with 100x100x10x10', {
   testthat::expect_equal(r1, r2)
   # expect_lt(max(abs(r1 - r2)), 1e-10)
 
-  RcppParallel::setThreadOptions(numThreads = 4)
-  collapse:::setThreads(4)
+  RcppParallel::setThreadOptions(numThreads = 1)
+  collapse:::setThreads(1)
   microbenchmark::microbenchmark({
     collapse:::collapser_real_rcppparallel(x, keep)
   }, {
     collapse:::collapser_real_omp(x, keep)
   }, {
     dipsaus::collapse(x, keep)
-  }, times = 20)
+  }, times = 5)
 
   # # Mean
   # r1 <- apply(x, c(3,2), mean)

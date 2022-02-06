@@ -69,6 +69,7 @@ struct Collapse : public RcppParallel::Worker
     int* margin_idx_ptr;
     int* margin_fct_ptr;
     R_xlen_t margin_rem = 0;
+    R_xlen_t margin_rem2 = 0;
     R_xlen_t x_idx = 0;
     double tmp = 0.0;
 
@@ -97,9 +98,12 @@ struct Collapse : public RcppParallel::Worker
         // margin_idx = *(keep_ptr + jj);
         // margin_fct = *(dim_re_ptr + jj);
         margin_fct_ptr = dim_re_ptr + jj;
-        loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr++;
-        *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
-        margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+        // loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr++;
+        // *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
+        // margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+        margin_rem2 = margin_rem / *margin_fct_ptr;
+        *(loc_buf_ptr + *margin_idx_ptr++) = margin_rem - margin_rem2 * *margin_fct_ptr;
+        margin_rem = margin_rem2;
 
       }
 
@@ -115,9 +119,13 @@ struct Collapse : public RcppParallel::Worker
           // margin_fct = *(dim_ptr + margin_idx);
           margin_idx_ptr = remain_ptr + jj;
           margin_fct_ptr = dim_ptr + *margin_idx_ptr;
-          loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr;
-          *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
-          margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+          // loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr;
+          // *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
+          // margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+
+          margin_rem2 = margin_rem / *margin_fct_ptr;
+          *(loc_buf_ptr + *margin_idx_ptr) = margin_rem - margin_rem2 * *margin_fct_ptr;
+          margin_rem = margin_rem2;
 
         }
 

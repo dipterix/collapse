@@ -119,6 +119,7 @@ SEXP collapser_real_omp(SEXP x, SEXP keep) {
 
     // Allocate buffers
     SEXP loc_buf = PROTECT(Rf_allocVector(INTSXP, ndims * ncores));
+    remain_ptr = INTEGER(remain);
 
 #pragma omp parallel num_threads(ncores)
 {
@@ -167,7 +168,7 @@ SEXP collapser_real_omp(SEXP x, SEXP keep) {
 
       tmp = 0.0;
 
-      remain_ptr = INTEGER(remain);
+
       for(kk = 0; kk < collapse_len; kk++){
         margin_rem = kk;
         // margin_fct = 1;
