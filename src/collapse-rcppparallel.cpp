@@ -101,7 +101,7 @@ struct Collapse : public RcppParallel::Worker
         // loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr++;
         // *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
         // margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
-        margin_rem2 = margin_rem / *margin_fct_ptr;
+        margin_rem2 = margin_rem / (R_xlen_t)(*margin_fct_ptr);
         *(loc_buf_ptr + *margin_idx_ptr++) = margin_rem - margin_rem2 * *margin_fct_ptr;
         margin_rem = margin_rem2;
 
@@ -123,7 +123,7 @@ struct Collapse : public RcppParallel::Worker
           // *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
           // margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
 
-          margin_rem2 = margin_rem / *margin_fct_ptr;
+          margin_rem2 = margin_rem / (R_xlen_t)(*margin_fct_ptr);
           *(loc_buf_ptr + *margin_idx_ptr) = margin_rem - margin_rem2 * *margin_fct_ptr;
           margin_rem = margin_rem2;
 

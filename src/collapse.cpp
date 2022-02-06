@@ -130,6 +130,7 @@ SEXP collapser_real_omp(SEXP x, SEXP keep) {
   double* re_ptr = REAL(re);
   int* dim_cumprod_ptr2 = dim_cumprod_ptr;
   R_xlen_t margin_rem = 0;
+  R_xlen_t margin_rem2 = 0;
   // R_xlen_t margin_fct = 1;
   // R_xlen_t margin_idx = 0;
   int* margin_idx_ptr;
@@ -160,9 +161,13 @@ SEXP collapser_real_omp(SEXP x, SEXP keep) {
         // margin_idx = *(keep_ptr + jj);
         // margin_fct = *(dim_re_ptr + jj);
         margin_fct_ptr = dim_re_ptr + jj;
-        loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr++;
-        *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
-        margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+        // loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr++;
+        // *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
+        // margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+        margin_rem2 = margin_rem / (R_xlen_t)(*margin_fct_ptr);
+        *(loc_buf_ptr + *margin_idx_ptr++) = margin_rem - margin_rem2 * *margin_fct_ptr;
+        margin_rem = margin_rem2;
+
 
       }
 
@@ -179,9 +184,13 @@ SEXP collapser_real_omp(SEXP x, SEXP keep) {
           // margin_fct = *(dim_ptr + margin_idx);
           margin_idx_ptr = remain_ptr + jj;
           margin_fct_ptr = dim_ptr + *margin_idx_ptr;
-          loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr;
-          *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
-          margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+          // loc_buf_ptr2 = loc_buf_ptr + *margin_idx_ptr;
+          // *loc_buf_ptr2 = margin_rem % *margin_fct_ptr;
+          // margin_rem = (margin_rem - *loc_buf_ptr2) / *margin_fct_ptr;
+
+          margin_rem2 = margin_rem / (R_xlen_t)(*margin_fct_ptr);
+          *(loc_buf_ptr + *margin_idx_ptr) = margin_rem - margin_rem2 * *margin_fct_ptr;
+          margin_rem = margin_rem2;
 
         }
 
